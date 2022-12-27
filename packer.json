@@ -1,0 +1,41 @@
+{
+    "variables": {
+        "password": "packer"
+    },
+    "builders": [
+        {
+            "type": "virtualbox-iso",
+            "guest_os_type": "Other_64",
+            "iso_url": "https://dl-cdn.alpinelinux.org/alpine/v3.17/releases/x86_64/alpine-standard-3.17.0-x86_64.iso",
+            "iso_checksum": "file:https://dl-cdn.alpinelinux.org/alpine/v3.17/releases/x86_64/alpine-standard-3.17.0-x86_64.iso.sha256",
+            "http_directory": "http",
+            "ssh_username": "root",
+            "ssh_password": "{{user `password`}}",
+            "ssh_port": 22,
+            "ssh_timeout": "6000s",
+            "shutdown_command": "poweroff",
+            "boot_command": [
+                "root<enter><wait>",
+                "ifconfig eth0 up && udhcpc -i eth0<enter><wait>",
+                "wget http://{{ .HTTPIP }}:{{ .HTTPPort }}/answers<enter><wait>",
+                "setup-alpine -f answers<enter><wait5>",
+                "{{user `password`}}<enter><wait>",
+                "{{user `password`}}<enter><wait5>",
+                "<enter><wait30>",
+                "y<enter><wait60>",
+                "rc-service sshd stop<enter><wait5>",
+                "mount /dev/sda3 /mnt<enter>",
+                "echo 'PermitRootLogin yes' >> /mnt/etc/ssh/sshd_config<enter><wait>",
+                "echo 'UseDNS no' >> /mnt/etc/ssh/sshd_config<enter><wait>",
+                "rc-service sshd restart<enter><wait5>",
+                "umount /mnt; reboot<enter>"
+            ]
+        }
+    ],
+    "provisioners": [
+        {
+            "type":"shell",
+            "inline": ["apk update"]
+        }
+    ]
+}
