@@ -2,7 +2,7 @@
 
 Packer template for Alpine Linux
 
-Build a Virtualbox machine for [Alpine Linux](https://wiki.alpinelinux.org/wiki/Packer_installation) using Packer.
+Build a Virtualbox machine with [Alpine Linux 3.17.0](https://wiki.alpinelinux.org/wiki/Packer_installation) using Packer.
 
 ```bash
 packer build packer.json
